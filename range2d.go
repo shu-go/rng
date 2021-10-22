@@ -88,39 +88,50 @@ func (r Range2D) Minus(a Range2D) []Range2D {
 		return nil
 	}
 
-	rr := make([]Range2D, 0, 8)
-	var tmp []Range2D
+	rr := make([]Range2D, 0)
 
 	rr = append(rr, r)
 	if !a.R1.ContainsRange(r.R1) {
 		for i := 0; i < len(rr); i++ {
-			tmp = rr[i].SplitByR1(a.R1.Start)
-			if len(tmp) > 1 {
-				rr = append(rr[:i], append(tmp, rr[i+1:]...)...)
-				i += len(tmp) - 1
+			tmp1, tmp2 := rr[i].SplitByR1(a.R1.Start)
+			if tmp2.IsValid() {
+				rr = append(rr, Invalid2D)
+				copy(rr[i+2:], rr[i+1:])
+				rr[i] = tmp1
+				rr[i+1] = tmp2
+				i++
 			}
 		}
 		for i := 0; i < len(rr); i++ {
-			tmp = rr[i].SplitByR1(a.R1.End.Next())
-			if len(tmp) > 1 {
-				rr = append(rr[:i], append(tmp, rr[i+1:]...)...)
-				i += len(tmp) - 1
+			tmp1, tmp2 := rr[i].SplitByR1(a.R1.End.Next())
+			if tmp2.IsValid() {
+				rr = append(rr, Invalid2D)
+				copy(rr[i+2:], rr[i+1:])
+				rr[i] = tmp1
+				rr[i+1] = tmp2
+				i++
 			}
 		}
 	}
 	if !a.R2.ContainsRange(r.R2) {
 		for i := 0; i < len(rr); i++ {
-			tmp = rr[i].SplitByR2(a.R2.Start)
-			if len(tmp) > 1 {
-				rr = append(rr[:i], append(tmp, rr[i+1:]...)...)
-				i += len(tmp) - 1
+			tmp1, tmp2 := rr[i].SplitByR2(a.R2.Start)
+			if tmp2.IsValid() {
+				rr = append(rr, Invalid2D)
+				copy(rr[i+2:], rr[i+1:])
+				rr[i] = tmp1
+				rr[i+1] = tmp2
+				i++
 			}
 		}
 		for i := 0; i < len(rr); i++ {
-			tmp = rr[i].SplitByR2(a.R2.End.Next())
-			if len(tmp) > 1 {
-				rr = append(rr[:i], append(tmp, rr[i+1:]...)...)
-				i += len(tmp) - 1
+			tmp1, tmp2 := rr[i].SplitByR2(a.R2.End.Next())
+			if tmp2.IsValid() {
+				rr = append(rr, Invalid2D)
+				copy(rr[i+2:], rr[i+1:])
+				rr[i] = tmp1
+				rr[i+1] = tmp2
+				i++
 			}
 		}
 	}
@@ -209,32 +220,26 @@ func (r Range2D) Minus(a Range2D) []Range2D {
 	// return rr
 }
 
-func (r Range2D) SplitByR1(p1 Sequential) []Range2D {
+func (r Range2D) SplitByR1(p1 Sequential) (Range2D, Range2D) {
 	if p1.Equal(r.R1.Start) ||
 		p1.Less(r.R1.Start) ||
 		r.R1.End.Less(p1) {
 		//
-		return []Range2D{r}
+		return r, Invalid2D
 	}
 
-	return []Range2D{
-		NewRange2D(r.R1.Start, p1.Prev(), r.R2.Start, r.R2.End),
-		NewRange2D(p1, r.R1.End, r.R2.Start, r.R2.End),
-	}
+	return NewRange2D(r.R1.Start, p1.Prev(), r.R2.Start, r.R2.End), NewRange2D(p1, r.R1.End, r.R2.Start, r.R2.End)
 }
 
-func (r Range2D) SplitByR2(p2 Sequential) []Range2D {
+func (r Range2D) SplitByR2(p2 Sequential) (Range2D, Range2D) {
 	if p2.Equal(r.R2.Start) ||
 		p2.Less(r.R2.Start) ||
 		r.R2.End.Less(p2) {
 		//
-		return []Range2D{r}
+		return r, Invalid2D
 	}
 
-	return []Range2D{
-		NewRange2D(r.R1.Start, r.R1.End, r.R2.Start, p2.Prev()),
-		NewRange2D(r.R1.Start, r.R1.End, p2, r.R2.End),
-	}
+	return NewRange2D(r.R1.Start, r.R1.End, r.R2.Start, p2.Prev()), NewRange2D(r.R1.Start, r.R1.End, p2, r.R2.End)
 }
 
 func JoinByR1(rr []Range2D) []Range2D {
