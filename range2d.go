@@ -226,29 +226,3 @@ func sortRange2DR1R2(rr []Range2D) {
 		return false
 	})
 }
-
-func sortRange2DR2R1(rr []Range2D) {
-	sort.Slice(rr, func(i, j int) bool {
-		if rr[i].R2.Start.Less(rr[j].R2.Start) {
-			return true
-		}
-		if rr[i].R2.Start.Equal(rr[j].R2.Start) {
-			if rr[i].R1.Start.Less(rr[j].R1.Start) {
-				return true
-			}
-			if rr[i].R1.Start.Equal(rr[j].R1.Start) {
-				if rr[i].R2.End.Less(rr[j].R2.End) {
-					return true
-				}
-				if rr[i].R2.End.Equal(rr[j].R2.End) {
-					if rr[i].R1.End.Less(rr[j].R1.End) {
-						return true
-					} else {
-						return false
-					}
-				}
-			}
-		}
-		return false
-	})
-}
