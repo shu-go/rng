@@ -140,7 +140,7 @@ func (r Range2D) Minus(a Range2D) []Range2D {
 			rr = append(rr[:i], rr[i+1:]...)
 		}
 	}
-	JoinByR1(&rr)
+	joinByR1(&rr)
 
 	return rr
 }
@@ -167,8 +167,8 @@ func (r Range2D) SplitByR2(p2 Sequential) (Range2D, Range2D) {
 	return NewRange2D(r.R1.Start, r.R1.End, r.R2.Start, p2.Prev()), NewRange2D(r.R1.Start, r.R1.End, p2, r.R2.End)
 }
 
-func JoinByR1(rr *[]Range2D) {
-	SortRange2DR1R2(*rr)
+func joinByR1(rr *[]Range2D) {
+	sortRange2DR1R2(*rr)
 
 	for i := 0; i < len(*rr)-1; i++ {
 		joined := false
@@ -201,7 +201,7 @@ func JoinByR1(rr *[]Range2D) {
 	}
 }
 
-func SortRange2DR1R2(rr []Range2D) {
+func sortRange2DR1R2(rr []Range2D) {
 	sort.Slice(rr, func(i, j int) bool {
 		if rr[i].R1.Start.Less(rr[j].R1.Start) {
 			return true
@@ -227,7 +227,7 @@ func SortRange2DR1R2(rr []Range2D) {
 	})
 }
 
-func SortRange2DR2R1(rr []Range2D) {
+func sortRange2DR2R1(rr []Range2D) {
 	sort.Slice(rr, func(i, j int) bool {
 		if rr[i].R2.Start.Less(rr[j].R2.Start) {
 			return true
