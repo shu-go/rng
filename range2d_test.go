@@ -7,6 +7,25 @@ import (
 	"github.com/shu-go/rng"
 )
 
+func Benchmark2D(b *testing.B) {
+	b.Run("Add", func(b *testing.B) {
+		b.ResetTimer()
+		for i := 0; i < b.N; i++ {
+			r1 := rng.NewRange2D(rng.Int(0), rng.Int(100), rng.Int(0), rng.Int(50))
+			r2 := rng.NewRange2D(rng.Int(0), rng.Int(100), rng.Int(100), rng.Int(150))
+			r1.Add(r2)
+		}
+	})
+	b.Run("Minus", func(b *testing.B) {
+		b.ResetTimer()
+		for i := 0; i < b.N; i++ {
+			r1 := rng.NewRange2D(rng.Int(150), rng.Int(250), rng.Int(100), rng.Int(11100))
+			r2 := rng.NewRange2D(rng.Int(100), rng.Int(200), rng.Int(1), rng.Int(255))
+			r1.Minus(r2)
+		}
+	})
+}
+
 func Test2DAdd(t *testing.T) {
 	t.Run("NonIntersecting", func(t *testing.T) {
 		r1 := rng.NewRange2D(rng.Int(0), rng.Int(100), rng.Int(0), rng.Int(50))
