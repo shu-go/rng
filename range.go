@@ -18,7 +18,7 @@ func NewRange(s, e Sequential) Range {
 }
 
 func (r Range) IsValid() bool {
-	return r.Start.Equal(r.End) || r.Start.Less(r.End)
+	return r.Start.Less(r.End) || r.Start.Equal(r.End)
 }
 
 func (r Range) ContainsSeq(s Sequential) bool {
@@ -106,7 +106,7 @@ func (r Range) Minus(a Range) (r1, r2 Range, intersect bool) {
 	}
 
 	// a が r を包含
-	if (a.Start.Equal(r.Start) || a.Start.Less(r.Start)) && (r.End.Equal(a.End) || r.End.Less(a.End)) {
+	if (a.Start.Less(r.Start) || a.Start.Equal(r.Start)) && (r.End.Less(a.End) || r.End.Equal(a.End)) {
 		return Invalid, Invalid, true
 	}
 
