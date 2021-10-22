@@ -140,7 +140,7 @@ func (r Range2D) Minus(a Range2D) []Range2D {
 			rr = append(rr[:i], rr[i+1:]...)
 		}
 	}
-	rr = JoinByR1(rr)
+	JoinByR1(&rr)
 
 	return rr
 }
@@ -167,45 +167,41 @@ func (r Range2D) SplitByR2(p2 Sequential) (Range2D, Range2D) {
 	return NewRange2D(r.R1.Start, r.R1.End, r.R2.Start, p2.Prev()), NewRange2D(r.R1.Start, r.R1.End, p2, r.R2.End)
 }
 
-func JoinByR1(rr []Range2D) []Range2D {
-	rr = SortRange2DR1R2(rr)
+func JoinByR1(rr *[]Range2D) {
+	SortRange2DR1R2(*rr)
 
-	for i := 0; i < len(rr)-1; i++ {
+	for i := 0; i < len(*rr)-1; i++ {
 		joined := false
-		if !rr[i].R1.Equal(rr[i+1].R1) {
+		if !(*rr)[i].R1.Equal((*rr)[i+1].R1) {
 			continue
 		}
-		if rr[i].R2.End.Next().Equal(rr[i+1].R2.Start) {
+		if (*rr)[i].R2.End.Next().Equal((*rr)[i+1].R2.Start) {
 			joined = true
-			rr[i].R2.End = rr[i+1].R2.End
-			rr = append(rr[:i+1], rr[i+1+1:]...)
+			(*rr)[i].R2.End = (*rr)[i+1].R2.End
+			*rr = append((*rr)[:i+1], (*rr)[i+1+1:]...)
 		}
 		if joined {
 			i--
 		}
 	}
 
-	for i := 0; i < len(rr)-1; i++ {
+	for i := 0; i < len(*rr)-1; i++ {
 		joined := false
-		if !rr[i].R2.Equal(rr[i+1].R2) {
+		if !(*rr)[i].R2.Equal((*rr)[i+1].R2) {
 			continue
 		}
-		if rr[i].R1.End.Next().Equal(rr[i+1].R1.Start) {
+		if (*rr)[i].R1.End.Next().Equal((*rr)[i+1].R1.Start) {
 			joined = true
-			rr[i].R1.End = rr[i+1].R1.End
-			rr = append(rr[:i+1], rr[i+1+1:]...)
+			(*rr)[i].R1.End = (*rr)[i+1].R1.End
+			*rr = append((*rr)[:i+1], (*rr)[i+1+1:]...)
 		}
 		if joined {
 			i--
 		}
 	}
-
-	return rr
 }
 
-func SortRange2DR1R2(rr []Range2D) []Range2D {
-	rr = append(make([]Range2D, 0, len(rr)), rr...)
-
+func SortRange2DR1R2(rr []Range2D) {
 	sort.Slice(rr, func(i, j int) bool {
 		if rr[i].R1.Start.Less(rr[j].R1.Start) {
 			return true
@@ -229,8 +225,6 @@ func SortRange2DR1R2(rr []Range2D) []Range2D {
 		}
 		return false
 	})
-
-	return rr
 }
 
 func SortRange2DR2R1(rr []Range2D) {
