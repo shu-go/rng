@@ -79,6 +79,40 @@ func (r Range2D) Add(a Range2D) (r1, r2 Range2D) {
 	return r, a
 }
 
+/*
+ * +--+---+ r
+ * |      |
+ * |  +------+
+ * |  |//////| a
+ * +--|//////|
+ *    +------+
+ *
+ * split
+ * +--+---+
+ * |  |   |
+ * +--+------+
+ * |  |//////|
+ * +--|//////|
+ *    +------+
+ *
+ * minus
+ * +--+---+ r1->
+ * |  |   |
+ * +--+---+
+ * |  |
+ * +--+
+ *
+ * r2
+ * |
+ * v
+ *
+ * join
+ * +--+---+
+ * |      |
+ * +--+---+
+ * |  |
+ * +--+
+ */
 func (r Range2D) Minus(a Range2D) []Range2D {
 	if !r.R1.IsIntersecting(r.R2) || !r.R2.IsIntersecting(a.R2) {
 		return []Range2D{r}
@@ -140,6 +174,7 @@ func (r Range2D) Minus(a Range2D) []Range2D {
 			rr = append(rr[:i], rr[i+1:]...)
 		}
 	}
+
 	joinByR1(&rr)
 
 	return rr
