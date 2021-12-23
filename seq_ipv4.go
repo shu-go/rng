@@ -16,7 +16,7 @@ func (s IPv4) Next() Sequential {
 
 	for i := range ip {
 		if ip[3-i] == 255 {
-			ip[3-i] = 1
+			ip[3-i] = 0
 		} else {
 			ip[3-i]++
 			break
@@ -33,7 +33,7 @@ func (s IPv4) Prev() Sequential {
 	}
 
 	for i := range ip {
-		if ip[3-i] <= 1 {
+		if ip[3-i] <= 0 {
 			ip[3-i] = 255
 		} else {
 			ip[3-i]--
