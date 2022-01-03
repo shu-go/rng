@@ -114,10 +114,6 @@ func (r Range2D) Add(a Range2D) (r1, r2 Range2D) {
  * +--+
  */
 func (r Range2D) Minus(a Range2D) []Range2D {
-	if !r.R1.IsIntersecting(r.R2) || !r.R2.IsIntersecting(a.R2) {
-		return []Range2D{r}
-	}
-
 	if a.R1.ContainsRange(r.R1) && a.R2.ContainsRange(r.R2) {
 		return nil
 	}
