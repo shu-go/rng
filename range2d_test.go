@@ -1,6 +1,7 @@
 package rng_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/shu-go/gotwant"
@@ -138,4 +139,27 @@ func Test2DMinus(t *testing.T) {
 		gotwant.Test(t, rr[0], rng.NewRange2D(rng.Int(150), rng.Int(200), rng.Int(256), rng.Int(11100)))
 		gotwant.Test(t, rr[1], rng.NewRange2D(rng.Int(201), rng.Int(250), rng.Int(100), rng.Int(11100)))
 	})
+
+	t.Run("1D", func(t *testing.T) {
+		r1 := rng.NewRange2D(rng.Int(0), rng.Int(65535), rng.IPv4{192, 168, 0, 0}, rng.IPv4{192, 168, 255, 255})
+		r2 := rng.NewRange2D(rng.Int(100), rng.Int(100), rng.IPv4{192, 168, 1, 0}, rng.IPv4{192, 168, 1, 255})
+		rr := r1.Minus(r2)
+		fmt.Printf("%v\n", r1)
+		fmt.Printf("%v\n", r2)
+		gotwant.Test(t, len(rr), 4)
+		gotwant.Test(t, rr[0], rng.NewRange2D(rng.Int(0), rng.Int(99), rng.IPv4{192, 168, 0, 0}, rng.IPv4{192, 168, 255, 255}))
+		gotwant.Test(t, rr[1], rng.NewRange2D(rng.Int(100), rng.Int(100), rng.IPv4{192, 168, 0, 0}, rng.IPv4{192, 168, 0, 255}))
+		gotwant.Test(t, rr[2], rng.NewRange2D(rng.Int(100), rng.Int(100), rng.IPv4{192, 168, 2, 0}, rng.IPv4{192, 168, 255, 255}))
+		gotwant.Test(t, rr[3], rng.NewRange2D(rng.Int(101), rng.Int(65535), rng.IPv4{192, 168, 0, 0}, rng.IPv4{192, 168, 255, 255}))
+	})
+}
+
+func TestIPv4(t *testing.T) {
+	i := rng.IPv4{192, 168, 1, 0}
+	ii := i.Prev()
+	gotwant.Test(t, ii, rng.IPv4{192, 168, 0, 255})
+
+	i = rng.IPv4{192, 168, 0, 255}
+	ii = i.Next()
+	gotwant.Test(t, ii, rng.IPv4{192, 168, 1, 0})
 }
