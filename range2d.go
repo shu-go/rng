@@ -113,7 +113,7 @@ func (r Range2D) Add(a Range2D) (r1, r2 Range2D) {
  * |  |
  * +--+
  */
-func (r Range2D) Minus(a Range2D) []Range2D {
+func (r Range2D) Minus(a Range2D, optJoin ...bool) []Range2D {
 	if a.R1.ContainsRange(r.R1) && a.R2.ContainsRange(r.R2) {
 		return nil
 	}
@@ -171,7 +171,9 @@ func (r Range2D) Minus(a Range2D) []Range2D {
 		}
 	}
 
-	joinByR1(&rr)
+	if len(optJoin) == 0 || optJoin[0] {
+		joinByR1(&rr)
+	}
 
 	return rr
 }
